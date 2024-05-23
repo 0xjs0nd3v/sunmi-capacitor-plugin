@@ -14,6 +14,8 @@ npx cap sync
 <docgen-index>
 
 * [`echo(...)`](#echo)
+* [Interfaces](#interfaces)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -33,5 +35,31 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
 --------------------
+
+
+### Interfaces
+
+
+#### PluginResultData
+
+
+#### PluginResultError
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`message`** | <code>string</code> |
+
+
+### Type Aliases
+
+
+#### PluginCallback
+
+<code>(data: <a href="#pluginresultdata">PluginResultData</a>, error?: <a href="#pluginresulterror">PluginResultError</a>): void</code>
+
+
+#### SunmiCardDeviceModel
+
+<code>{ model: string; isP2: boolean; isP1N: boolean; isP2Lite: boolean; isP2Pro: boolean; isP14G: boolean; }</code>
 
 </docgen-api>
