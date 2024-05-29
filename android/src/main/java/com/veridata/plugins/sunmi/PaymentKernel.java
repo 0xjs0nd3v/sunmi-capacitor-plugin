@@ -66,8 +66,8 @@ public class PaymentKernel {
         payKernel.initPaySDK(context, PaymentKernel.sunmiPayKernelCallback);
     }
 
-    public boolean isConnected() {
-        return this.isConnectPaySDK;
+    public static boolean isConnected() {
+        return isConnectPaySDK;
     }
 
 

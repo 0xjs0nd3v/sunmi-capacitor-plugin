@@ -1,5 +1,6 @@
 package com.veridata.plugins.sunmi;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;

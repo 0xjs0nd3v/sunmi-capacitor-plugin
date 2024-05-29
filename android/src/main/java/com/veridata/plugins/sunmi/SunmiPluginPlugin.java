@@ -28,13 +28,14 @@ public class SunmiPluginPlugin extends Plugin {
     public void initSunmiSDK (PluginCall call) {
         try {
             Context applicationContext = this.getActivity().getApplicationContext();
-            final boolean isInitilized = new InitSunmiSDK().load(applicationContext);
-            if (isInitilized) {
-                LogUtil.i("SunmiSDK", "connected");
-                JSObject ret = new JSObject();
-                ret.put("status", "connected");
-                call.resolve(ret);
+            PaymentKernel.initPayKernel(applicationContext);
+
+            LogUtil.i("SunmiSDK is connected? ", PaymentKernel.isConnected() + "");
+
+            if (!PaymentKernel.isConnected()) {
+                throw new RuntimeException("InitPayKernel failed");
             }
+            call.resolve();
         } catch (Exception e) {
             call.reject("Can not initialize payment kernel");
         }
