@@ -12,9 +12,7 @@ import com.sunmi.pay.hardware.aidlv2.security.SecurityOptV2;
 import com.sunmi.pay.hardware.aidlv2.system.BasicOptV2;
 import com.sunmi.pay.hardware.aidlv2.tax.TaxOptV2;
 
-import sunmi.paylib.SunmiPayKernel;
-
-public class PaymentKernel {
+public class SunmiPayKernel {
     public static BasicOptV2 basicOptV2;
     public static ReadCardOptV2 readCardOptV2;
     public static PinPadOptV2 pinPadOptV2;
@@ -27,11 +25,11 @@ public class PaymentKernel {
     public static Context context;
 
 
-    protected static String TAG = "SunmiCardReader";
+    protected static String TAG = "SunmiPaymentKernel";
 
-    final private static SunmiPayKernel payKernel = SunmiPayKernel.getInstance();
+    final private static sunmi.paylib.SunmiPayKernel payKernel = sunmi.paylib.SunmiPayKernel.getInstance();
 
-    final static SunmiPayKernel.ConnectCallback sunmiPayKernelCallback =  new SunmiPayKernel.ConnectCallback() {
+    final static sunmi.paylib.SunmiPayKernel.ConnectCallback sunmiPayKernelCallback =  new sunmi.paylib.SunmiPayKernel.ConnectCallback() {
         @Override
         public void onConnectPaySDK() {
             LogUtil.e(TAG, "onConnectPaySDK...");
@@ -63,7 +61,7 @@ public class PaymentKernel {
 
     /** bind PaySDK service */
     public static void initPayKernel(Context context) {
-        payKernel.initPaySDK(context, PaymentKernel.sunmiPayKernelCallback);
+        payKernel.initPaySDK(context, SunmiPayKernel.sunmiPayKernelCallback);
     }
 
     public static boolean isConnected() {

@@ -1,33 +1,28 @@
 import { PluginCallback } from '@capacitor/core';
 
 export interface SunmiPluginPlugin {
-  echo(options: { value: string }): Promise<{ value: string }>;
   /**
-   * Initializes the SDK
-   * @returns Promise<void>
+   * Get the system params details.
    */
-  initSunmiSDK: () => Promise<void>;
+  getSysParam(options: { key: string }): Promise<{ value: string }>;
   /**
    * Start listing to read the card,
    * you have to initialize the SDK first before calling this functionality.
-   * @returns Promise<SunmiCardResult>
    */
-  readCard: (callback: PluginCallback) => void;
-  /**
-   * Closes the card reader.
-   * @returns Promise<void>
-   */
-  closeCardReader: () => Promise<void>;
+  readCard: (options: { cardType: string }, callback: PluginCallback) => void;
   /**
    * Get the device model details.
-   * @returns Promise<SunmiCardResult>
    */
   getDeviceModel: () => Promise<SunmiCardDeviceModel>;
+  /**
+   * Initializes the SDK to start reading cards.
+   */
+  initSunmiSDK: () => Promise<void>;
+  /**
+   * Closes the card reader.
+   */
+  closeCardReader: () => Promise<void>;
 }
-
-export type SunmiCardResult = {
-  uuid: string;
-};
 
 export type SunmiCardDeviceModel = {
   model: string;

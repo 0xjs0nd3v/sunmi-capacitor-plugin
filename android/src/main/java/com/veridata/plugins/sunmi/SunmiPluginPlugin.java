@@ -12,30 +12,16 @@ import com.veridata.plugins.sunmi.utils.LogUtil;
 
 @CapacitorPlugin(name = "SunmiPlugin")
 public class SunmiPluginPlugin extends Plugin {
-
-    private SunmiCardReader sunmiCardReader = new SunmiCardReader();
-
-    @PluginMethod
-    public void echo(PluginCall call) {
-        String value = call.getString("value");
-
-        JSObject ret = new JSObject();
-        ret.put("value", sunmiCardReader.echo(value));
-        call.resolve(ret);
-    }
+    private SunmiModules implementation = new SunmiModules();
 
     @PluginMethod
     public void initSunmiSDK (PluginCall call) {
         try {
             Context applicationContext = this.getActivity().getApplicationContext();
-            PaymentKernel.initPayKernel(applicationContext);
-
-            LogUtil.i("SunmiSDK is connected? ", PaymentKernel.isConnected() + "");
-
-            if (!PaymentKernel.isConnected()) {
-                throw new RuntimeException("InitPayKernel failed");
+            final boolean isInitilized  = implementation.initSunmiSDK(applicationContext);
+            if (isInitilized) {
+                call.resolve();
             }
-            call.resolve();
         } catch (Exception e) {
             call.reject("Can not initialize payment kernel");
         }
@@ -43,22 +29,35 @@ public class SunmiPluginPlugin extends Plugin {
 
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)
     public void readCard (PluginCall call) {
-        sunmiCardReader.readCard(call);
+        implementation.readCard(call);
     }
 
     @PluginMethod
     public void closeCardReader (PluginCall call) {
-        sunmiCardReader.closeCardReader(call);
+        implementation.closeCardReader(call);
     }
 
     @PluginMethod
     public void getDeviceModel (PluginCall call) {
         try {
-            JSObject response = sunmiCardReader.getDeviceModel();
+            JSObject response = implementation.getDeviceModel();
             call.resolve(response);
         } catch (Exception e) {
             LogUtil.e("Getting Device Model ", e.getMessage());
             call.reject("Can not get the device model", e);
         }
     }
+
+    @PluginMethod
+    public void getSysParam (PluginCall call) {
+        try {
+            String key = call.getString("key");
+            JSObject response = implementation.getSysParam(key);
+            call.resolve(response);
+        } catch (Exception e) {
+            LogUtil.e("Getting System Param ", e.getMessage());
+            call.reject("Can not get the system param", e);
+        }
+    }
+
 }
