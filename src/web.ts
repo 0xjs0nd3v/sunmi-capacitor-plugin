@@ -6,7 +6,7 @@ export class SunmiCardReaderWeb
   extends WebPlugin
   implements SunmiPluginPlugin {
     
-  getSysParam(): Promise<{ value: string; }> {
+  getSysParam(): Promise<{ result: any }> {
       throw new Error('No web implementation please run the application on an android device [Sunmi Device]');
   }
 

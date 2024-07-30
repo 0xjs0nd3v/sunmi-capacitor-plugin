@@ -14,8 +14,11 @@ import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import com.veridata.plugins.sunmi.utils.DeviceUtil;
 
+import java.util.Locale;
+
 public class SunmiModules {
 
+    private static final int TDK_INDEX = 19;
     final int TIMEOUT = 120;
     protected String TAG = "SunmiCardReader";
     private PluginCall capacitorCall;
@@ -53,11 +56,21 @@ public class SunmiModules {
                 this.capacitorCall = null;
                 return;
             }
-            Bundle bundle = new Bundle();
-            bundle.putInt("cardType", AidlConstants.CardType.MAGNETIC.getValue());
-            bundle.putInt("encMaskStart", 6);
-            bundle.putInt("encMaskEnd", 4);
-            SunmiPayKernel.readCardOptV2.checkCardEnc(bundle, mReadCardCallback, TIMEOUT);
+//            Bundle bundle = new Bundle();
+//            bundle.putInt("cardType", AidlConstants.CardType.MAGNETIC.getValue());
+//            bundle.putInt("encKeySystem", AidlConstants.Security.SEC_MKSK);
+//            bundle.putInt("encKeyIndex", TDK_INDEX);
+//            bundle.putInt("encKeyAlgType", AidlConstants.Security.KEY_ALG_TYPE_3DES);
+//            bundle.putInt("encMode", AidlConstants.Security.DATA_MODE_ECB);
+//            bundle.putByteArray("encIv", new byte[16]);
+//            bundle.putByte("encPaddingMode", (byte) 0);
+//            bundle.putInt("encMaskStart", 6);
+//            bundle.putInt("encMaskEnd", 4);
+//            bundle.putChar("encMaskWord", '*');
+//            bundle.putInt("ctrCode", 0);
+//            bundle.putInt("stopOnError", 0);
+//            SunmiPayKernel.readCardOptV2.checkCardEnc(bundle, mReadCardCallback, TIMEOUT);
+            SunmiPayKernel.readCardOptV2.checkCard(AidlConstants.CardType.MAGNETIC.getValue(), mReadCardCallback, TIMEOUT);
         } catch (RemoteException e) {
             call.reject(e.getMessage());
             this.capacitorCall = null;
@@ -91,15 +104,24 @@ public class SunmiModules {
 //            response.put("bundle", bundle);
 
             if (bundle != null) {
-                String track1 = bundle.getString("TRACK1");
-                String track2 = bundle.getString("TRACK2");
-                String track3 = bundle.getString("TRACK3");
+                String track1 = null2String(bundle.getString("TRACK1"));
+                String track2 = null2String(bundle.getString("TRACK2"));
+                String track3 = null2String(bundle.getString("TRACK3"));
+
+                int code1 = bundle.getInt("track1ErrorCode");
+                int code2 = bundle.getInt("track2ErrorCode");
+                int code3 = bundle.getInt("track3ErrorCode");
+
                 String name = bundle.getString("name");
                 String panMasked = bundle.getString("pan");
                 String expire = bundle.getString("expire");
 
                 String[] track2Parts = track2.split("=");
                 String pan = track2Parts[0];
+
+                LogUtil.e(TAG, String.format(Locale.getDefault(),
+                        "track1ErrorCode:%d,track1:%s\ntrack2ErrorCode:%d,track2:%s\ntrack3ErrorCode:%d,track3:%s",
+                        code1, track1, code2, track2, code3, track3));
 
                 response.put("track1", track1 + "");
                 response.put("track2", track2 + "");
@@ -205,5 +227,9 @@ public class SunmiModules {
         JSObject objectResponse = new JSObject();
         objectResponse.put("result", result);
         return objectResponse;
+    }
+
+    public static String null2String(String str) {
+        return str == null ? "" : str;
     }
 }

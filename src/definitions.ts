@@ -4,7 +4,7 @@ export interface SunmiPluginPlugin {
   /**
    * Get the system params details.
    */
-  getSysParam(options: { key: string }): Promise<{ value: string }>;
+  getSysParam(options: { key: string }): Promise<{ result: any }>;
   /**
    * Start listing to read the card,
    * you have to initialize the SDK first before calling this functionality.
