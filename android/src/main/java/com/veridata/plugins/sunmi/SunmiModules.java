@@ -364,28 +364,23 @@ public class SunmiModules {
             LogUtil.e(TAG, "check card error,code:" + code + " message:" + msg);
 
             capacitorCall.errorCallback(msg);
+
             if (code == -30005) {
                 LogUtil.e(TAG, "check card timeout");
-                ThreadPoolUtil.executeInSinglePool(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ThreadPoolUtil.wait(1000);
-                            if (mCardType == AidlConstantsV2.CardType.NFC.getValue()) {
-                                SunmiPayKernel.readCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
-                                SunmiPayKernel.readCardOptV2.cancelCheckCard();
-                            } else if (mCardType == AidlConstantsV2.CardType.IC.getValue()) {
-                                SunmiPayKernel.readCardOptV2.cardOff(AidlConstantsV2.CardType.IC.getValue());
-                                SunmiPayKernel.readCardOptV2.cancelCheckCard();
-                            } else {
-                                SunmiPayKernel.readCardOptV2.cancelCheckCard();
-                            }
-                            SunmiPayKernel.readCardOptV2.checkCard(AidlConstants.CardType.MIFARE.getValue(), mReadCardCallback, TIMEOUT);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+            }
+
+            try {
+                if (mCardType == AidlConstantsV2.CardType.NFC.getValue()) {
+                    SunmiPayKernel.readCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
+                    SunmiPayKernel.readCardOptV2.cancelCheckCard();
+                } else if (mCardType == AidlConstantsV2.CardType.IC.getValue()) {
+                    SunmiPayKernel.readCardOptV2.cardOff(AidlConstantsV2.CardType.IC.getValue());
+                    SunmiPayKernel.readCardOptV2.cancelCheckCard();
+                } else {
+                    SunmiPayKernel.readCardOptV2.cancelCheckCard();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
     };
