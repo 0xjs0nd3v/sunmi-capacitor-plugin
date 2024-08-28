@@ -42,7 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SunmiModules {
-    final int TIMEOUT = 120;
+    final int TIMEOUT = 60;
     protected String TAG = "SunmiCardReader";
     private PluginCall capacitorCall;
 
