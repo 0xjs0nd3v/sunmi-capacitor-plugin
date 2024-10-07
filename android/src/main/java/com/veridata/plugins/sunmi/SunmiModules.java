@@ -181,7 +181,9 @@ public class SunmiModules {
         LogUtil.e(TAG, "cardType is " + cardType);
         call.setKeepAlive(true);
         mCardNo = null;
-        if (cardType.equals("NFC")) {
+        if (cardType.equals("All")) {
+            checkCard(call);
+        } else if (cardType.equals("NFC")) {
             mCardType = AidlConstantsV2.CardType.NFC.getValue();
             checkNFCCard(call);
         } else if (cardType.equals("MAGNETIC")) {
@@ -233,6 +235,27 @@ public class SunmiModules {
         JSObject objectResponse = new JSObject();
         objectResponse.put("result", result);
         return objectResponse;
+    }
+
+    private void checkCard(PluginCall call) {
+        try {
+            LogUtil.e(TAG, "Checkcard Called ");
+
+            this.capacitorCall = call;
+            if (SunmiPayKernel.readCardOptV2 == null) {
+                call.reject("SDK is not initialized ");
+                this.capacitorCall = null;
+                return;
+            }
+            SunmiPayKernel.emvOptV2.initEmvProcess();
+            initEmvTlvData();
+            int cardType =  AidlConstantsV2.CardType.IC.getValue() | AidlConstantsV2.CardType.NFC.getValue();
+            SunmiPayKernel.readCardOptV2.checkCard(cardType, mReadCardCallback, TIMEOUT);
+        } catch (RemoteException e) {
+            call.reject(e.getMessage());
+            this.capacitorCall = null;
+            e.printStackTrace();
+        }
     }
 
     private void checkNFCCard(PluginCall call) {
@@ -346,6 +369,7 @@ public class SunmiModules {
 //            capacitorCall.resolve(response);
             //IC card Beep buzzer when check card success
             SunmiPayKernel.basicOptV2.buzzerOnDevice(1, 2750, 200, 0);
+            mCardType = AidlConstantsV2.CardType.IC.getValue();
             transactProcess();
         }
 
@@ -356,6 +380,7 @@ public class SunmiModules {
 //            response.put("uuid", uuid);
 //            capacitorCall.resolve(response);
 //            LogUtil.e(TAG, "Resolved to JS");
+            mCardType = AidlConstantsV2.CardType.NFC.getValue();
             transactProcess();
         }
 
